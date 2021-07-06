@@ -18,7 +18,6 @@ public:
 
   simdjson_really_inline simdjson_result<object_iterator> begin() noexcept;
   simdjson_really_inline simdjson_result<object_iterator> end() noexcept;
-
   /**
    * Look up a field by name on an object (order-sensitive).
    *
@@ -75,6 +74,42 @@ public:
   /** @overload simdjson_really_inline simdjson_result<value> find_field_unordered(std::string_view key) & noexcept; */
   simdjson_really_inline simdjson_result<value> operator[](std::string_view key) && noexcept;
 
+  /**
+   * Get the value associated with the given JSON pointer. We use the RFC 6901
+   * https://tools.ietf.org/html/rfc6901 standard, interpreting the current node
+   * as the root of its own JSON document.
+   *
+   *   ondemand::parser parser;
+   *   auto json = R"({ "foo": { "a": [ 10, 20, 30 ] }})"_padded;
+   *   auto doc = parser.iterate(json);
+   *   doc.at_pointer("/foo/a/1") == 20
+   *
+   * It is allowed for a key to be the empty string:
+   *
+   *   ondemand::parser parser;
+   *   auto json = R"({ "": { "a": [ 10, 20, 30 ] }})"_padded;
+   *   auto doc = parser.iterate(json);
+   *   doc.at_pointer("//a/1") == 20
+   *
+   * Note that at_pointer() called on the document automatically calls the document's rewind
+   * method between each call. It invalidates all previously accessed arrays, objects and values
+   * that have not been consumed. Yet it is not the case when calling at_pointer on an object
+   * instance: there is no rewind and no invalidation.
+   *
+   * You may call at_pointer more than once on an object, but each time the pointer is advanced
+   * to be within the value matched by the key indicated by the JSON pointer query. Thus any preceeding
+   * key (as well as the current key) can no longer be used with following JSON pointer calls.
+   *
+   * Also note that at_pointer() relies on find_field() which implies that we do not unescape keys when matching.
+   *
+   * @return The value associated with the given JSON pointer, or:
+   *         - NO_SUCH_FIELD if a field does not exist in an object
+   *         - INDEX_OUT_OF_BOUNDS if an array index is larger than an array length
+   *         - INCORRECT_TYPE if a non-integer is used to access an array
+   *         - INVALID_JSON_POINTER if the JSON pointer is invalid and cannot be parsed
+   */
+  inline simdjson_result<value> at_pointer(std::string_view json_pointer) noexcept;
+
 protected:
   static simdjson_really_inline simdjson_result<object> start(value_iterator &iter) noexcept;
   static simdjson_really_inline simdjson_result<object> start_root(value_iterator &iter) noexcept;
@@ -112,6 +147,7 @@ public:
   simdjson_really_inline simdjson_result<SIMDJSON_IMPLEMENTATION::ondemand::value> find_field_unordered(std::string_view key) && noexcept;
   simdjson_really_inline simdjson_result<SIMDJSON_IMPLEMENTATION::ondemand::value> operator[](std::string_view key) & noexcept;
   simdjson_really_inline simdjson_result<SIMDJSON_IMPLEMENTATION::ondemand::value> operator[](std::string_view key) && noexcept;
+  simdjson_really_inline simdjson_result<SIMDJSON_IMPLEMENTATION::ondemand::value> at_pointer(std::string_view json_pointer) noexcept;
 };
 
 } // namespace simdjson

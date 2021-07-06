@@ -6,6 +6,7 @@ simdjson_really_inline json_iterator::json_iterator(json_iterator &&other) noexc
   : token(std::forward<token_iterator>(other.token)),
     parser{other.parser},
     _string_buf_loc{other._string_buf_loc},
+    error{other.error},
     _depth{other._depth}
 {
   other.parser = nullptr;
@@ -14,6 +15,7 @@ simdjson_really_inline json_iterator &json_iterator::operator=(json_iterator &&o
   token = other.token;
   parser = other.parser;
   _string_buf_loc = other._string_buf_loc;
+  error = other.error;
   _depth = other._depth;
   other.parser = nullptr;
   return *this;
@@ -26,6 +28,13 @@ simdjson_really_inline json_iterator::json_iterator(const uint8_t *buf, ondemand
     _depth{1}
 {
   logger::log_headers();
+}
+
+inline void json_iterator::rewind() noexcept {
+  token.index = parser->implementation->structural_indexes.get();
+  logger::log_headers(); // We start again
+  _string_buf_loc = parser->string_buf.get();
+  _depth = 1;
 }
 
 // GCC 7 warns when the first line of this function is inlined away into oblivion due to the caller
@@ -58,16 +67,19 @@ simdjson_warn_unused simdjson_really_inline error_code json_iterator::skip_child
       _depth--;
       if (depth() <= parent_depth) { return SUCCESS; }
       break;
-    case '"':
+    /*case '"':
       if(*peek() == ':') {
         // we are at a key!!! This is
         // only possible if someone searched
-        // for a key and the key was not found.
+        // for a key in an object and the key
+        // was not found but our code then
+        // decided the consume the separating
+        // comma before returning.
         logger::log_value(*this, "key");
         advance(); // eat up the ':'
         break; // important!!!
       }
-      simdjson_fallthrough;
+      simdjson_fallthrough;*/
     // Anything else must be a scalar value
     default:
       // For the first scalar, we will have incremented depth already, so we decrement it here.
@@ -124,6 +136,16 @@ simdjson_really_inline void json_iterator::assert_at_root() const noexcept {
 
 simdjson_really_inline bool json_iterator::at_eof() const noexcept {
   return token.index == &parser->implementation->structural_indexes[parser->implementation->n_structural_indexes];
+}
+
+inline std::string json_iterator::to_string() const noexcept {
+  if( !is_alive() ) { return "dead json_iterator instance"; }
+  const char * current_structural = reinterpret_cast<const char *>(token.peek());
+  return std::string("json_iterator [ depth : ") + std::to_string(_depth)
+          + std::string(", structural : '") + std::string(current_structural,1)
+          + std::string("', offset : ") + std::to_string(token.current_offset())
+          + std::string("', error : ") + error_message(error)
+          + std::string(" ]");
 }
 
 simdjson_really_inline bool json_iterator::is_alive() const noexcept {

@@ -25,8 +25,6 @@ protected:
   depth_t _depth{};
   /**
    * The starting token index for this value
-   *
-   * PERF NOTE: this is a safety check; we expect this to be elided in release builds.
    */
   token_position _start_position{};
 
@@ -282,8 +280,35 @@ public:
   simdjson_really_inline bool is_valid() const noexcept;
 
   /** @} */
-
 protected:
+  /**
+   * Restarts an array iteration.
+   * @returns Whether the array has any elements (returns false for empty).
+   */
+  simdjson_really_inline bool reset_array() noexcept;
+  /**
+   * Restarts an object iteration.
+   * @returns Whether the object has any fields (returns false for empty).
+   */
+  simdjson_really_inline bool reset_object() noexcept;
+  /**
+   * move_at_start(): moves us so that we are pointing at the beginning of
+   * the container. It updates the index so that at_start() is true and it
+   * syncs the depth. The user can then create a new container instance.
+   *
+   * Usage: used with value::count_elements().
+   **/
+  simdjson_really_inline void move_at_start() noexcept;
+
+  /**
+   * move_at_container_start(): moves us so that we are pointing at the beginning of
+   * the container so that assert_at_container_start() passes.
+   *
+   * Usage: used with reset_array() and reset_object().
+   **/
+   simdjson_really_inline void move_at_container_start() noexcept;
+  /* Useful for debugging and logging purposes. */
+  inline std::string to_string() const noexcept;
   simdjson_really_inline value_iterator(json_iterator *json_iter, depth_t depth, token_position start_index) noexcept;
 
   simdjson_really_inline bool parse_null(const uint8_t *json) const noexcept;
@@ -299,14 +324,19 @@ protected:
   simdjson_really_inline error_code incorrect_type_error(const char *message) const noexcept;
 
   simdjson_really_inline bool is_at_start() const noexcept;
-  simdjson_really_inline bool is_at_container_start() const noexcept;
+  /**
+   * is_at_iterator_start() returns true on an array or object after it has just been
+   * created, whether the instance is empty or not.
+   *
+   * Usage: used by array::begin() in debug mode (SIMDJSON_DEVELOPMENT_CHECKS)
+   */
   simdjson_really_inline bool is_at_iterator_start() const noexcept;
-  simdjson_really_inline void assert_at_start() const noexcept;
-  simdjson_really_inline void assert_at_container_start() const noexcept;
-  simdjson_really_inline void assert_at_root() const noexcept;
-  simdjson_really_inline void assert_at_child() const noexcept;
-  simdjson_really_inline void assert_at_next() const noexcept;
-  simdjson_really_inline void assert_at_non_root_start() const noexcept;
+  inline void assert_at_start() const noexcept;
+  inline void assert_at_container_start() const noexcept;
+  inline void assert_at_root() const noexcept;
+  inline void assert_at_child() const noexcept;
+  inline void assert_at_next() const noexcept;
+  inline void assert_at_non_root_start() const noexcept;
 
   friend class document;
   friend class object;
