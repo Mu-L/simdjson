@@ -30,7 +30,7 @@
   <td id="projectlogo"><img alt="Logo" src="logotiny.png"/></td>
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">simdjson
-   &#160;<span id="projectnumber">3.2.1</span>
+   &#160;<span id="projectnumber">3.8.0</span>
    </div>
    <div id="projectbrief">Ridiculously Fast JSON</div>
   </td>
@@ -162,7 +162,7 @@ Static Public Member Functions</h2></td></tr>
 <div class="textblock"><p>String with extra allocation for ease of use with parser::parse() </p>
 <p>This is a move-only class, it cannot be copied. </p>
 
-<p class="definition">Definition at line <a class="el" href="padded__string_8h_source.html#l00021">21</a> of file <a class="el" href="padded__string_8h_source.html">padded_string.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="padded__string_8h_source.html#l00023">23</a> of file <a class="el" href="padded__string_8h_source.html">padded_string.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="ac06ec74c78934565cdf50df163d35476"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ac06ec74c78934565cdf50df163d35476">&#9670;&nbsp;</a></span>padded_string() <span class="overload">[1/5]</span></h2>
@@ -279,7 +279,7 @@ Static Public Member Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="padded__string-inl_8h_source.html#l00058">58</a> of file <a class="el" href="padded__string-inl_8h_source.html">padded_string-inl.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="padded__string-inl_8h_source.html#l00066">66</a> of file <a class="el" href="padded__string-inl_8h_source.html">padded_string-inl.h</a>.</p>
 
 </div>
 </div>
@@ -315,7 +315,7 @@ Static Public Member Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="padded__string-inl_8h_source.html#l00065">65</a> of file <a class="el" href="padded__string-inl_8h_source.html">padded_string-inl.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="padded__string-inl_8h_source.html#l00073">73</a> of file <a class="el" href="padded__string-inl_8h_source.html">padded_string-inl.h</a>.</p>
 
 </div>
 </div>
@@ -352,7 +352,7 @@ Static Public Member Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="padded__string-inl_8h_source.html#l00076">76</a> of file <a class="el" href="padded__string-inl_8h_source.html">padded_string-inl.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="padded__string-inl_8h_source.html#l00084">84</a> of file <a class="el" href="padded__string-inl_8h_source.html">padded_string-inl.h</a>.</p>
 
 </div>
 </div>
@@ -383,7 +383,7 @@ Static Public Member Functions</h2></td></tr>
 <p>The length of the string. </p>
 <p>Does not include padding. </p>
 
-<p class="definition">Definition at line <a class="el" href="padded__string-inl_8h_source.html#l00105">105</a> of file <a class="el" href="padded__string-inl_8h_source.html">padded_string-inl.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="padded__string-inl_8h_source.html#l00113">113</a> of file <a class="el" href="padded__string-inl_8h_source.html">padded_string-inl.h</a>.</p>
 
 </div>
 </div>
@@ -412,6 +412,9 @@ Static Public Member Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Load this padded string from a file. </p>
+<h2><a class="anchor" id="autotoc_md143"></a>
+Windows and Unicode</h2>
+<p>Windows users who need to read files with non-ANSI characters in the name should set their code page to UTF-8 (65001) before calling this function. This should be the default with Windows 11 and better. Further, they may use the AreFileApisANSI function to determine whether the filename is interpreted using the ANSI or the system default OEM codepage, and they may call SetFileApisToOEM accordingly.</p>
 <dl class="section return"><dt>Returns</dt><dd>IO_ERROR on error. Be mindful that on some 32-bit systems, the file size might be limited to 2 GB.</dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
@@ -420,7 +423,7 @@ Static Public Member Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="padded__string-inl_8h_source.html#l00117">117</a> of file <a class="el" href="padded__string-inl_8h_source.html">padded_string-inl.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="padded__string-inl_8h_source.html#l00125">125</a> of file <a class="el" href="padded__string-inl_8h_source.html">padded_string-inl.h</a>.</p>
 
 </div>
 </div>
@@ -457,7 +460,7 @@ Static Public Member Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="padded__string-inl_8h_source.html#l00081">81</a> of file <a class="el" href="padded__string-inl_8h_source.html">padded_string-inl.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="padded__string-inl_8h_source.html#l00089">89</a> of file <a class="el" href="padded__string-inl_8h_source.html">padded_string-inl.h</a>.</p>
 
 </div>
 </div>
@@ -487,7 +490,7 @@ Static Public Member Functions</h2></td></tr>
 <p>The length of the string. </p>
 <p>Does not include padding. </p>
 
-<p class="definition">Definition at line <a class="el" href="padded__string-inl_8h_source.html#l00103">103</a> of file <a class="el" href="padded__string-inl_8h_source.html">padded_string-inl.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="padded__string-inl_8h_source.html#l00111">111</a> of file <a class="el" href="padded__string-inl_8h_source.html">padded_string-inl.h</a>.</p>
 
 </div>
 </div>
